@@ -63,3 +63,6 @@ archive_reports/
 
 # Git
 .git/
+
+# 本地检查脚本
+check_before_release.sh

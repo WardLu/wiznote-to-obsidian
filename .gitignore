@@ -66,3 +66,8 @@ archive_reports/
 
 # 本地检查脚本
 check_before_release.sh
+
+# 同步删除工具生成的临时文件
+.sync_delete_scan_report.json
+sync_delete_*.log
+.sync_delete_trash/

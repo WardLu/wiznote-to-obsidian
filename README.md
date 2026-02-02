@@ -49,6 +49,8 @@
 | 🔧 **格式修复** | 自动修复标题、列表、代码块等 7 类格式问题 |
 | 🔗 **链接转换** | Markdown 链接 → Obsidian WikiLinks |
 | 🖼️ **图片管理** | 统一图片路径，支持本地和远程图片 |
+| 📎 **附件迁移** | 迁移 PDF、XMind、Excel 等附件文件 |
+| 🔗 **附件链接** | 自动为笔记添加附件引用链接 |
 | ✨ **元数据增强** | 自动添加 YAML front matter |
 | 📊 **质量报告** | 生成详细的迁移报告和统计信息 |
 
@@ -143,7 +145,7 @@ CMD ["python3", "tools/wiznote_to_obsidian.py", "--all"]
 # 查看帮助
 python3 wiznote_to_obsidian.py --help
 
-# 执行完整流程
+# 执行完整流程（不包括附件）
 python3 wiznote_to_obsidian.py --all
 
 # 只检查语法
@@ -157,6 +159,12 @@ python3 wiznote_to_obsidian.py --links
 
 # 只修复图片
 python3 wiznote_to_obsidian.py --images
+
+# 迁移附件文件（重要！）
+python3 wiznote_to_obsidian.py --migrate-attachments
+
+# 为笔记添加附件链接（重要！）
+python3 wiznote_to_obsidian.py --link-attachments
 
 # 生成报告
 python3 wiznote_to_obsidian.py --report
@@ -177,8 +185,29 @@ python3 wiznote_to_obsidian.py --links
 # 4. 修复图片路径
 python3 wiznote_to_obsidian.py --images
 
-# 5. 生成报告
+# 5. 迁移附件文件（新增）
+python3 wiznote_to_obsidian.py --migrate-attachments
+
+# 6. 为笔记添加附件链接（新增）
+python3 wiznote_to_obsidian.py --link-attachments
+
+# 7. 生成报告
 python3 wiznote_to_obsidian.py --report
+```
+
+### ⚠️ 附件迁移（重要）
+
+WizNote 导出时，附件（PDF、XMind、Excel 等）不会自动链接到笔记中。需要执行以下步骤：
+
+1. **迁移附件文件** - 将所有附件从导出目录复制到 Obsidian Vault
+2. **添加附件链接** - 自动为笔记添加附件引用
+
+```bash
+# 迁移附件（约 70MB，包括 PDF、XMind、Excel 等）
+python3 wiznote_to_obsidian.py --migrate-attachments
+
+# 自动为笔记添加附件链接
+python3 wiznote_to_obsidian.py --link-attachments
 ```
 
 ---

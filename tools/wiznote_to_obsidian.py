@@ -562,7 +562,11 @@ class WiznoteToObsidianMigrator:
         # 5. 生成报告
         report_result = self.generate_report()
 
-        print("\n✅ 所有步骤完成！")
+        print("\n✅ 基础迁移步骤完成！")
+        print("\n💡 提示：附件迁移需要单独运行以下命令：")
+        print("   python3 wiznote_to_obsidian.py --migrate-attachments")
+        print("   python3 wiznote_to_obsidian.py --link-attachments")
+
         return {
             'check': check_result,
             'fix': fix_result,
@@ -570,6 +574,72 @@ class WiznoteToObsidianMigrator:
             'images': image_result,
             'report': report_result
         }
+
+    def migrate_attachments(self, dry_run: bool = False):
+        """迁移附件文件"""
+        print(f"📦 迁移附件文件...")
+        print(f"源目录: {self.config.source_dir}")
+        print(f"目标目录: {self.config.vault_dir}")
+        print(f"模式: {'干运行' if dry_run else '实际迁移'}\n")
+
+        # 动态导入附件迁移工具
+        import subprocess
+        import sys
+
+        script_path = Path(__file__).parent / "migrate_attachments.py"
+
+        if not script_path.exists():
+            print(f"❌ 找不到附件迁移工具: {script_path}")
+            return {'success': False, 'error': '工具不存在'}
+
+        cmd = [sys.executable, str(script_path),
+               '--export-dir', self.config.source_dir,
+               '--vault-dir', self.config.vault_dir]
+
+        if dry_run:
+            cmd.append('--dry-run')
+
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+            print(result.stdout)
+            return {'success': True}
+        except subprocess.CalledProcessError as e:
+            print(f"❌ 附件迁移失败: {e}")
+            print(e.stderr)
+            return {'success': False, 'error': str(e)}
+
+    def link_attachments(self, dry_run: bool = False):
+        """为笔记添加附件链接"""
+        print(f"🔗 为笔记添加附件链接...")
+        print(f"导出目录: {self.config.source_dir}")
+        print(f"Vault 目录: {self.config.vault_dir}")
+        print(f"模式: {'干运行' if dry_run else '实际添加'}\n")
+
+        # 动态导入附件链接工具
+        import subprocess
+        import sys
+
+        script_path = Path(__file__).parent / "link_attachments.py"
+
+        if not script_path.exists():
+            print(f"❌ 找不到附件链接工具: {script_path}")
+            return {'success': False, 'error': '工具不存在'}
+
+        cmd = [sys.executable, str(script_path),
+               '--export-dir', self.config.source_dir,
+               '--vault-dir', self.config.vault_dir]
+
+        if dry_run:
+            cmd.append('--dry-run')
+
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+            print(result.stdout)
+            return {'success': True}
+        except subprocess.CalledProcessError as e:
+            print(f"❌ 附件链接失败: {e}")
+            print(e.stderr)
+            return {'success': False, 'error': str(e)}
 
 
 def main():
@@ -599,12 +669,15 @@ def main():
     parser.add_argument('--links', action='store_true', help='转换链接为 WikiLinks')
     parser.add_argument('--images', action='store_true', help='修复图片路径')
     parser.add_argument('--report', action='store_true', help='生成统计报告')
+    parser.add_argument('--migrate-attachments', action='store_true', help='迁移附件文件')
+    parser.add_argument('--link-attachments', action='store_true', help='为笔记添加附件链接')
     parser.add_argument('--dry-run', action='store_true', help='模拟运行，不实际修改文件')
 
     args = parser.parse_args()
 
     # 如果没有指定任何操作，显示帮助
-    if not any([args.all, args.check, args.fix, args.links, args.images, args.report]):
+    if not any([args.all, args.check, args.fix, args.links, args.images, args.report,
+                args.migrate_attachments, args.link_attachments]):
         parser.print_help()
         return
 
@@ -617,6 +690,15 @@ def main():
     # 执行相应操作
     if args.all:
         migrator.run_all()
+        # 附件迁移需要单独执行（因为比较耗时）
+        print("\n" + "="*60)
+        print("📎 附件迁移")
+        print("="*60)
+        migrator.migrate_attachments(dry_run=args.dry_run)
+        print("\n" + "="*60)
+        print("🔗 附件链接")
+        print("="*60)
+        migrator.link_attachments(dry_run=args.dry_run)
     elif args.check:
         migrator.check_syntax()
     elif args.fix:
@@ -627,6 +709,10 @@ def main():
         migrator.fix_images()
     elif args.report:
         migrator.generate_report()
+    elif args.migrate_attachments:
+        migrator.migrate_attachments(dry_run=args.dry_run)
+    elif args.link_attachments:
+        migrator.link_attachments(dry_run=args.dry_run)
 
 
 if __name__ == '__main__':

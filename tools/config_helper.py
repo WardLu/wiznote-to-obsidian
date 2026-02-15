@@ -18,13 +18,31 @@ class ToolConfig:
         Args:
             config_file: 配置文件路径（JSON格式）
         """
+        # 智能检测默认目录
+        project_root = Path(__file__).parent.parent  # 项目根目录
+        wiznote_download = project_root / 'wiznote_download'
+
+        # 优先使用 wiznote_download（如果存在），否则使用 wiznote_export
+        if wiznote_download.exists():
+            default_source = str(wiznote_download)
+            default_vault = str(project_root / 'wiznote_obsidian')  # vault 指向输出目录
+            default_target = str(project_root / 'wiznote_obsidian')  # 输出到新目录
+        else:
+            default_source = self._expand_path('~/wiznote_export')
+            default_vault = self._expand_path('~/wiznote_obsidian')  # vault 指向输出目录
+            default_target = self._expand_path('~/wiznote_obsidian')  # 输出到新目录
+
         # 默认配置
         self.defaults = {
-            'source_dir': self._expand_path('~/wiznote_export'),
-            'vault_dir': self._expand_path('~/ObsidianVault'),
-            'target_dir': None,  # 会自动设置为 vault_dir/02_Areas
-            'attachments_dir': None,  # 会自动设置为 vault_dir/Wiznote/attachments
+            'source_dir': default_source,
+            'vault_dir': default_vault,
+            'target_dir': default_target,
+            'attachments_dir': None,  # 会自动设置为 vault_dir/attachments
         }
+
+        # 设置初始值
+        for key, value in self.defaults.items():
+            setattr(self, key, value)
 
         # 从配置文件加载
         if config_file and Path(config_file).exists():
@@ -34,10 +52,8 @@ class ToolConfig:
         self._load_from_env()
 
         # 设置自动计算的路径
-        if not self.target_dir:
-            self.target_dir = os.path.join(self.vault_dir, '02_Areas')
         if not self.attachments_dir:
-            self.attachments_dir = os.path.join(self.vault_dir, 'Wiznote/attachments')
+            self.attachments_dir = os.path.join(self.vault_dir, 'attachments')
 
     def _expand_path(self, path: str) -> str:
         """扩展路径中的 ~ 和环境变量"""
@@ -72,12 +88,15 @@ class ToolConfig:
         """验证配置是否有效"""
         errors = []
 
-        # 检查必需的目录
-        if not Path(self.vault_dir).exists():
-            errors.append(f"Vault 目录不存在: {self.vault_dir}")
-
-        if not Path(self.target_dir).exists():
-            errors.append(f"目标目录不存在: {self.target_dir}")
+        # 检查目标目录（如果需要创建，提示用户）
+        target_path = Path(self.target_dir)
+        if not target_path.exists():
+            # 尝试创建目录
+            try:
+                target_path.mkdir(parents=True, exist_ok=True)
+                print(f"✅ 已创建目标目录: {self.target_dir}")
+            except Exception as e:
+                errors.append(f"无法创建目标目录 {self.target_dir}: {e}")
 
         if errors:
             print("❌ 配置验证失败：")

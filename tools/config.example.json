@@ -1,8 +1,8 @@
 {
-  "source_dir": "~/wiznote_export",
-  "vault_dir": "~/ObsidianVault",
-  "target_dir": "~/ObsidianVault/02_Areas",
-  "attachments_dir": "~/ObsidianVault/Wiznote/attachments",
+  "source_dir": "wiznote_download",
+  "vault_dir": "wiznote_obsidian",
+  "target_dir": "wiznote_obsidian",
+  "attachments_dir": "wiznote_obsidian/attachments",
   "categories": {
     "Category1/Subcategory": {
       "tags": ["Wiznote", "Category1", "⭐⭐⭐⭐⭐"],

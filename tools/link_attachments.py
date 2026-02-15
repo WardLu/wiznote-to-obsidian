@@ -96,7 +96,7 @@ class AttachmentLinker:
                 content = f.read()
 
             # 检查是否已有附件链接
-            if 'Wiznote/attachments/' in content or '![](' in content:
+            if 'attachments/' in content or '![](' in content:
                 return 0
 
             # 查找对应附件
@@ -144,7 +144,7 @@ class AttachmentLinker:
             for group_name in sorted(attachment_groups.keys()):
                 attachment_section += f"### {group_name}\n\n"
                 for attach in attachment_groups[group_name]:
-                    rel_path = f"Wiznote/attachments/{attach.name}"
+                    rel_path = f"attachments/{attach.name}"
                     file_size = attach.stat().st_size
                     size_str = self.format_size(file_size)
                     attachment_section += f"- [[{rel_path}|{attach.stem}]] ({size_str})\n"
@@ -199,7 +199,7 @@ class AttachmentLinker:
         """更新所有笔记"""
         print(f"🔍 扫描笔记文件...")
 
-        vault_attach_dir = self.vault_dir / "Wiznote" / "attachments"
+        vault_attach_dir = self.vault_dir / "attachments"
         if not vault_attach_dir.exists():
             print(f"❌ 附件目录不存在: {vault_attach_dir}")
             return {'total_files': 0, 'updated_files': 0, 'total_links': 0}

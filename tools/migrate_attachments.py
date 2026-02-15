@@ -20,9 +20,10 @@ class AttachmentMigrator:
         self.total_size = 0
 
     def find_all_attachments(self) -> Dict[str, List[Path]]:
-        """找到所有 attachments 目录及其文件"""
+        """找到所有附件目录及其文件（包括 attachments 和 _files 目录）"""
         attachments = {}
 
+        # 查找 attachments 目录
         for attach_dir in self.export_dir.rglob("attachments"):
             if attach_dir.is_dir():
                 files = list(attach_dir.glob("*"))
@@ -30,11 +31,19 @@ class AttachmentMigrator:
                 if files:
                     attachments[str(attach_dir)] = files
 
+        # 查找 _files 目录（WizNote 下载的图片和附件）
+        for files_dir in self.export_dir.rglob("*_files"):
+            if files_dir.is_dir():
+                files = list(files_dir.glob("*"))
+                files = [f for f in files if f.is_file()]
+                if files:
+                    attachments[str(files_dir)] = files
+
         return attachments
 
     def get_vault_attachments_dir(self) -> Path:
         """获取 Vault 中的附件目录"""
-        attach_dir = self.vault_dir / "Wiznote" / "attachments"
+        attach_dir = self.vault_dir / "attachments"
         attach_dir.mkdir(parents=True, exist_ok=True)
         return attach_dir
 
@@ -45,7 +54,7 @@ class AttachmentMigrator:
 
         if not attachments:
             print("❌ 没有找到任何附件")
-            return {'total_files': 0, 'total_size': 0}
+            return {'total_dirs': 0, 'total_files': 0, 'total_size': 0, 'files': []}
 
         vault_attach_dir = self.get_vault_attachments_dir()
 
@@ -78,7 +87,7 @@ class AttachmentMigrator:
 
                     self.migrated_files.append({
                         'source': str(file_path.relative_to(self.export_dir)),
-                        'dest': f"Wiznote/attachments/{dest_path.name}",
+                        'dest': f"attachments/{dest_path.name}",
                         'size': file_size
                     })
 
@@ -160,8 +169,8 @@ def main():
         print(f"\n📄 附件清单: {list_file}")
 
         print(f"\n💡 使用提示:")
-        print(f"  附件已复制到: Wiznote/attachments/")
-        print(f"  在 Obsidian 中可以用 [[Wiznote/attachments/文件名]] 引用")
+        print(f"  附件已复制到: attachments/")
+        print(f"  在 Obsidian 中可以用 [[attachments/文件名]] 引用")
 
 
 if __name__ == '__main__':

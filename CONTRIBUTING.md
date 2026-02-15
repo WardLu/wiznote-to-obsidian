@@ -59,10 +59,10 @@ git checkout -b fix/your-bug-fix
 
 ```bash
 # 运行主工具
-python3 tools/wiznote_to_obsidian.py --help
+python3 tools/obsidian_formatter.py --help
 
 # 测试具体功能
-python3 tools/wiznote_to_obsidian.py --check
+python3 tools/obsidian_formatter.py --check
 ```
 
 #### 6. 提交更改
@@ -188,7 +188,7 @@ def fix_markdown(file_path: str) -> bool:
 ### 环境信息
 - OS: [如 macOS 14.0]
 - Python 版本: [如 3.11.0]
-- 工具版本: [如 v1.0.0]
+- 工具版本: [如 v1.1.0]
 
 ### 相关日志
 ```
@@ -237,8 +237,7 @@ def fix_markdown(file_path: str) -> bool:
 ## 📧 联系方式
 
 如有问题：
-- 在 Issue 中提问
-- Email: [wardlu@126.com](mailto:wardlu@126.com)
+- 在 [GitHub Issues](https://github.com/WardLu/wiznote-to-obsidian/issues) 中提问
 - GitHub: [@WardLu](https://github.com/WardLu)
 
 ## 🌟 贡献者

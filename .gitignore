@@ -32,42 +32,33 @@ env/
 *.swo
 *~
 
-# Obsidian
-.obsidian/
+# 系统文件
 .DS_Store
+Thumbs.db
+desktop.ini
 
 # 个人配置文件（包含敏感信息）
 config.json
 *.bak
 
-# 个人数据
+# 个人数据目录
 obsidian_export/
+wiznote_download/
+wiznote_obsidian/
 Wiznote/
-WizNote_Migration/
 
 # 临时文件
 *.tmp
 *.log
 *.cache
 
-# 系统文件
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# 归档报告（个人数据）
-archive_reports/
-
-# Claude Code 配置
-.claude/
-
-# Git
-.git/
-
-# 本地检查脚本
-check_before_release.sh
-
-# 同步删除工具生成的临时文件
+# 同步删除工具生成的文件
 .sync_delete_scan_report.json
 sync_delete_*.log
 .sync_delete_trash/
+
+# 内部文档（包含敏感信息和个人路径）
+docs/internal/
+
+# Claude Code 配置
+.claude/

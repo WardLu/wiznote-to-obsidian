@@ -24,11 +24,25 @@ from typing import List, Dict, Tuple, Optional
 class Config:
     """配置管理"""
     def __init__(self, config_file: Optional[str] = None):
-        # 默认配置（使用相对路径或环境变量）
-        self.source_dir = os.path.expanduser("~/wiznote_export")
-        self.vault_dir = os.path.expanduser("~/ObsidianVault")
-        self.target_dir = os.path.join(self.vault_dir, "02_Areas")
-        self.attachments_dir = os.path.join(self.vault_dir, "Wiznote/attachments")
+        # 智能检测默认目录
+        project_root = Path(__file__).parent.parent  # 项目根目录
+        wiznote_download = project_root / 'wiznote_download'
+
+        # 优先使用 wiznote_download（如果存在），否则使用传统路径
+        if wiznote_download.exists():
+            default_source = str(wiznote_download)
+            default_vault = str(project_root / 'wiznote_obsidian')  # vault 指向输出目录
+            default_target = str(project_root / 'wiznote_obsidian')  # 输出到新目录
+        else:
+            default_source = os.path.expanduser("~/wiznote_export")
+            default_vault = os.path.expanduser("~/wiznote_obsidian")  # vault 指向输出目录
+            default_target = os.path.expanduser("~/wiznote_obsidian")  # 输出到新目录
+
+        # 默认配置
+        self.source_dir = default_source
+        self.vault_dir = default_vault
+        self.target_dir = default_target
+        self.attachments_dir = os.path.join(self.vault_dir, "attachments")
 
         # 如果有配置文件，加载配置
         if config_file and Path(config_file).exists():
@@ -336,14 +350,14 @@ class ImagePathFixer:
         fixed_count = 0
         not_found_count = 0
 
-        images_in_file = re.findall(r'!\[\(/Wiznote/attachments/images/([^)]+)\)', content)
+        images_in_file = re.findall(r'!\[\(/attachments/images/([^)]+)\)', content)
 
         for image_name in images_in_file:
             relative_path = self.find_image_by_name(image_name)
 
             if relative_path:
-                old_path = f'![](/Wiznote/attachments/images/{image_name})'
-                new_path = f'![](/Wiznote/attachments/{relative_path})'
+                old_path = f'![](/attachments/images/{image_name})'
+                new_path = f'![](/attachments/{relative_path})'
                 content = content.replace(old_path, new_path)
                 fixed_count += 1
             else:
@@ -515,6 +529,7 @@ class WiznoteToObsidianMigrator:
         print(f"\n📝 Markdown 文件: {len(md_files)}")
 
         # 统计图片
+        images = []  # 初始化变量
         if Path(self.config.attachments_dir).exists():
             image_files = list(Path(self.config.attachments_dir).rglob('*'))
             image_extensions = {'.png', '.jpg', '.jpeg', '.gif', '.webp'}
@@ -543,6 +558,22 @@ class WiznoteToObsidianMigrator:
         print("🚀 WizNote → Obsidian 一体化迁移")
         print("=" * 60 + "\n")
 
+        # 0. 如果 source 和 target 不同，先复制文件
+        source_path = Path(self.config.source_dir)
+        target_path = Path(self.config.target_dir)
+
+        if source_path.resolve() != target_path.resolve():
+            if not target_path.exists():
+                print("📂 复制文件到目标目录...")
+                print(f"   源目录: {source_path}")
+                print(f"   目标目录: {target_path}")
+
+                import shutil
+                shutil.copytree(source_path, target_path)
+                print(f"   ✅ 复制完成\n")
+            else:
+                print(f"📂 目标目录已存在: {target_path}\n")
+
         # 1. 检查语法
         check_result = self.check_syntax()
         print("\n" + "-" * 60 + "\n")
@@ -562,10 +593,7 @@ class WiznoteToObsidianMigrator:
         # 5. 生成报告
         report_result = self.generate_report()
 
-        print("\n✅ 基础迁移步骤完成！")
-        print("\n💡 提示：附件迁移需要单独运行以下命令：")
-        print("   python3 wiznote_to_obsidian.py --migrate-attachments")
-        print("   python3 wiznote_to_obsidian.py --link-attachments")
+        print("\n✅ 基础格式化完成！")
 
         return {
             'check': check_result,
@@ -578,7 +606,7 @@ class WiznoteToObsidianMigrator:
     def migrate_attachments(self, dry_run: bool = False):
         """迁移附件文件"""
         print(f"📦 迁移附件文件...")
-        print(f"源目录: {self.config.source_dir}")
+        print(f"源目录: {self.config.target_dir}")
         print(f"目标目录: {self.config.vault_dir}")
         print(f"模式: {'干运行' if dry_run else '实际迁移'}\n")
 
@@ -593,7 +621,7 @@ class WiznoteToObsidianMigrator:
             return {'success': False, 'error': '工具不存在'}
 
         cmd = [sys.executable, str(script_path),
-               '--export-dir', self.config.source_dir,
+               '--export-dir', self.config.target_dir,
                '--vault-dir', self.config.vault_dir]
 
         if dry_run:
@@ -611,7 +639,7 @@ class WiznoteToObsidianMigrator:
     def link_attachments(self, dry_run: bool = False):
         """为笔记添加附件链接"""
         print(f"🔗 为笔记添加附件链接...")
-        print(f"导出目录: {self.config.source_dir}")
+        print(f"导出目录: {self.config.target_dir}")
         print(f"Vault 目录: {self.config.vault_dir}")
         print(f"模式: {'干运行' if dry_run else '实际添加'}\n")
 
@@ -626,7 +654,7 @@ class WiznoteToObsidianMigrator:
             return {'success': False, 'error': '工具不存在'}
 
         cmd = [sys.executable, str(script_path),
-               '--export-dir', self.config.source_dir,
+               '--export-dir', self.config.target_dir,
                '--vault-dir', self.config.vault_dir]
 
         if dry_run:
@@ -675,22 +703,23 @@ def main():
 
     args = parser.parse_args()
 
-    # 如果没有指定任何操作，显示帮助
-    if not any([args.all, args.check, args.fix, args.links, args.images, args.report,
-                args.migrate_attachments, args.link_attachments]):
-        parser.print_help()
-        return
-
     # 加载配置
     config = Config(args.config)
 
     # 创建迁移器
     migrator = WiznoteToObsidianMigrator(config)
 
+    # 如果没有指定任何操作，执行基础格式化（5步）
+    if not any([args.all, args.check, args.fix, args.links, args.images, args.report,
+                args.migrate_attachments, args.link_attachments]):
+        # 默认执行基础5步
+        migrator.run_all()
+        return
+
     # 执行相应操作
     if args.all:
+        # 完整迁移（7步）：基础5步 + 附件迁移 + 附件链接
         migrator.run_all()
-        # 附件迁移需要单独执行（因为比较耗时）
         print("\n" + "="*60)
         print("📎 附件迁移")
         print("="*60)

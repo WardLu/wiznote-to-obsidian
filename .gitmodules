@@ -1,0 +1,3 @@
+[submodule "app"]
+	path = app
+	url = ../wiznote2obsidian-app.git

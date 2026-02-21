@@ -452,6 +452,37 @@ class WizMigrator:
 
     def process_note(self, note, output_base):
         """Download and convert a single note"""
+        import signal
+
+        # 设置超时（120秒）
+        def timeout_handler(signum, frame):
+            raise TimeoutError("笔记处理超时")
+
+        # 只在 Unix 系统上使用 signal（Windows 不支持）
+        use_timeout = hasattr(signal, 'SIGALRM')
+
+        if use_timeout:
+            old_handler = signal.signal(signal.SIGALRM, timeout_handler)
+            signal.alarm(120)  # 120秒超时
+
+        try:
+            return self._process_note_internal(note, output_base)
+        except TimeoutError as e:
+            note_title = note.get('title') or note.get('documentTitle') or note.get('docTitle') or 'Unknown'
+            print(f"    ⚠️  笔记处理超时: {note_title}")
+            return {
+                "status": "error",
+                "title": note_title,
+                "error": "处理超时",
+                "note_guid": note.get('guid') or note.get('documentGuid')
+            }
+        finally:
+            if use_timeout:
+                signal.alarm(0)  # 取消超时
+                signal.signal(signal.SIGALRM, old_handler)
+
+    def _process_note_internal(self, note, output_base):
+        """内部方法：实际处理笔记"""
         # Handle different field naming conventions (snake_case vs camelCase)
         note_guid = note.get('guid') or note.get('documentGuid') or note.get('docGuid')
         note_title = note.get('title') or note.get('documentTitle') or note.get('docTitle')

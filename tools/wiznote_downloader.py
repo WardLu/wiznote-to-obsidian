@@ -43,7 +43,8 @@ DEFAULT_CONNECT_TIMEOUT = 10
 class WizMigrator:
     def __init__(self, user_id, password, max_workers=DEFAULT_MAX_WORKERS,
                  max_retries=DEFAULT_MAX_RETRIES, timeout=DEFAULT_TIMEOUT,
-                 connect_timeout=DEFAULT_CONNECT_TIMEOUT):
+                 connect_timeout=DEFAULT_CONNECT_TIMEOUT,
+                 on_progress=None):
         self.user_id = user_id
         self.password = password
         self.token = None
@@ -54,6 +55,9 @@ class WizMigrator:
         self.processed_count = 0
         self.success_count = 0
         self.known_folders = set() # Track folders to avoid loops
+
+        # 进度回调
+        self.on_progress = on_progress
 
         # 图片统计
         self.total_images_found = 0      # 发现的图片总数
@@ -952,6 +956,13 @@ class WizMigrator:
             for future in as_completed(futures):
                 completed += 1
                 result = future.result()
+
+                # 调用进度回调
+                if self.on_progress:
+                    try:
+                        self.on_progress(completed, len(all_notes))
+                    except:
+                        pass  # 忽略回调错误
 
                 if result is None:
                     continue

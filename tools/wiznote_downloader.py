@@ -85,7 +85,12 @@ class WizMigrator:
         })
 
     def login(self):
-        """Login to WizNote Account Server"""
+        """
+        Login to WizNote Account Server
+
+        Returns:
+            tuple: (success: bool, error_message: str or None)
+        """
         print(f"Logging in as {self.user_id}...")
         try:
             login_url = f"{AS_URL}/as/user/login"
@@ -100,8 +105,9 @@ class WizMigrator:
             data = response.json()
 
             if data.get('return_code') != 200 and data.get('returnCode') != 200:
-                print(f"Login failed: {data.get('return_message') or data.get('returnMessage')}")
-                return False
+                error_msg = data.get('return_message') or data.get('returnMessage') or "登录失败"
+                print(f"Login failed: {error_msg}")
+                return False, error_msg
 
             result = data.get('result', data)
             self.token = result.get('token')
@@ -110,8 +116,9 @@ class WizMigrator:
             self.user_guid = result.get('user_guid') or result.get('userGuid')  # 保存 user_guid
 
             if not self.token or not self.kb_guid:
-                print("Login failed: Missing token or kb_guid")
-                return False
+                error_msg = "登录失败：服务器未返回必要信息"
+                print(f"Login failed: {error_msg}")
+                return False, error_msg
 
             print(f"Login successful!")
             print(f"KB GUID: {self.kb_guid}")
@@ -119,11 +126,12 @@ class WizMigrator:
             self.session.headers.update({
                 "X-Wiz-Token": self.token
             })
-            return True
+            return True, None
 
         except Exception as e:
+            error_msg = f"登录出错: {str(e)}"
             print(f"Error during login: {str(e)}")
-            return False
+            return False, error_msg
 
     def sanitize_filename(self, name):
         """Make filename safe for filesystem"""

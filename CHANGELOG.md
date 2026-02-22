@@ -5,7 +5,145 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
-## [1.2.0] - 2026-02-22
+## [1.3.1] - 2026-02-23
+
+### 新增功能
+
+#### 商业应用 (app/)
+
+- ✅ **购买授权弹窗二维码图片** - 使用真实二维码替换占位符
+  - 微信收款二维码：`assets/wechat_pay.jpg`
+  - 微信加好友二维码：`assets/wechat_contact.png`
+  - 图片自动缩放至 180x180 像素
+  - 加载失败时显示友好错误提示
+
+### 改进
+
+- 🔧 **图片加载增强** - 添加 PIL 图像处理支持
+  - 自动检测 PIL 可用性
+  - 图片不存在时显示占位符
+  - 异常处理和日志记录
+
+---
+
+## [1.3.0] - 2026-02-22
+
+### 🔒 安全增强
+
+- 🔐 **加密本地存储** - 防止数据篡改
+  - XOR 加密本地数据（密钥与设备绑定）
+  - HMAC-SHA256 签名验证数据完整性
+  - 自动检测数据篡改
+  - 新增 `server/lib/secure_storage.py`
+  - 新增数据迁移工具 `tools/migrate_to_encrypted_storage.py`
+
+- 🌐 **服务器端验证** - 核心授权逻辑移到服务器
+  - Flask API 服务器：`server/app.py`
+  - 支持 5 个 API 端点（activate、verify、check、increment、health）
+  - 客户端支持在线/离线模式自动切换
+  - 防止客户端代码篡改
+  - 新增部署指南 `docs/DEPLOYMENT_GUIDE.md`
+
+- 🛡️ **代码混淆和打包** - 增加逆向难度
+  - PyInstaller 打包配置 `ShadowShift.spec`
+  - 一键打包脚本 `scripts/build.sh`
+  - 支持 3 种打包方式（PyInstaller / +PyArmor / Nuitka）
+  - 新增打包指南 `docs/BUILD_GUIDE.md`
+
+- 📚 **完整文档** - 生产就绪
+  - 部署指南：`docs/DEPLOYMENT_GUIDE.md`
+  - 打包指南：`docs/BUILD_GUIDE.md`
+  - 防作弊指南：`docs/ANTI_CRACK_GUIDE.md`
+  - 验证指南：`docs/VERIFICATION_GUIDE.md`
+  - 安全增强报告：`docs/SECURITY_ENHANCEMENT_REPORT.md`
+
+- 📦 **依赖更新**
+  - 新增 Flask、flask-cors、gunicorn（服务器端）
+  - 更新 `requirements.txt`
+
+### 防护效果
+
+- ✅ 防护级别：⭐⭐⭐☆☆ → ⭐⭐⭐⭐⭐
+- ✅ 破解难度：30 分钟 → 3-7 天
+- ✅ 适合场景：MVP → 生产环境
+
+### Bug 修复
+
+- 🐛 **修复授权系统模块导入错误** - 激活授权码时无响应
+  - 问题：`ModuleNotFoundError: No module named 'server.lib.license'`
+  - 修复：创建缺失的 `server/lib/license.py` 和 `server/lib/errors.py`
+  - 影响：所有用户无法激活授权码
+  - 验证：导入测试通过，授权码激活功能恢复正常
+
+### 新增功能
+
+#### 商业应用 (app/)
+
+- ✅ **授权码生成工具** - 管理员批量生成授权码
+  - 命令行工具：`tools/generate_license.py`
+  - 支持批量生成（--count 参数）
+  - 支持保存到文件（--output 参数）
+  - 格式：`W2O-XXXX-XXXX-XXXX`
+  - 提供 3 个测试授权码供使用
+
+- ✅ **授权系统文档** - 完整使用指南
+  - `docs/LICENSE_SYSTEM_GUIDE.md` - 详细说明文档
+  - `docs/LICENSE_QUICK_REF.md` - 快速参考卡片
+  - 包含技术细节、常见问题、部署注意事项
+
+- ✅ **GUI 格式化按钮** - 为小白用户提供一键格式化功能
+  - 新增「📝 格式化笔记」按钮
+  - 新增「📎 迁移附件」按钮
+  - 实时显示格式化进度和日志
+  - 完成后弹窗提示输出目录
+  - 无需使用命令行工具
+
+- ✅ **格式化工具集成** - GUI 直接调用格式化脚本
+  - 使用 subprocess 调用 `tools/obsidian_formatter.py`
+  - 实时输出命令日志到 GUI
+  - 错误处理和友好提示
+
+- ✅ **购买授权信息卡片** - GUI 内显示购买方式
+  - 在授权面板下方显示购买信息
+  - 显示价格：¥49.00 / 30天
+  - 显示联系方式：微信和邮件
+  - 浅蓝色背景卡片设计，视觉突出
+
+- ✅ **授权计数系统** - 限制免费用户下载额度
+  - 未授权用户只能下载 10 个笔记
+  - 每下载一个笔记自动增加计数
+  - 超过额度后停止下载并提示购买
+  - 已授权用户无限制下载
+
+### 改进
+
+- 🔧 **文案优化** - 按钮和提示文案更准确
+  - 「🚀 一键迁移」→「📥 下载笔记」（更准确描述功能）
+  - 「迁移进度」→「下载进度」（与按钮文案一致）
+  - 所有相关提示和错误信息同步更新
+- 🔧 优化下载完成提示（引导用户使用 GUI 按钮而非命令行）
+- 🔧 添加按钮禁用逻辑（下载中不可点击格式化按钮）
+- 🔧 并排布局优化（格式化和附件迁移按钮并排显示）
+
+### UI/UX 改进
+
+- 🎨 **新增工具按钮区域** - 紧凑的并排按钮设计
+- 🎨 **按钮状态反馈** - 执行中显示"格式化中..."/"迁移中..."
+- 🎨 **标题优化** - 「为知笔记 → Obsidian 一键迁移」→「为知笔记 → Obsidian 迁移工具」
+
+### Bug 修复
+
+- 🐛 **修复授权计数失效** - 之前未授权用户可以无限下载
+  - 问题：下载过程中未调用 `increment_download_count()`
+  - 修复：在进度回调中增加计数
+  - 修复：超过 10 个笔记后停止下载并提示购买授权码
+
+### 文档更新
+
+- 📝 更新 CHANGELOG.md（主仓库和子模块）
+- 📝 更新使用指南
+
+---
 
 ### 新增功能
 

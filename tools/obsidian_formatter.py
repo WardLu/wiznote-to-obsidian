@@ -706,6 +706,11 @@ def main():
     # 加载配置
     config = Config(args.config)
 
+    # 调试：打印源目录（如果设置了环境变量）
+    if os.getenv('WIZNOTE_SOURCE_DIR'):
+        print(f"[DEBUG] WIZNOTE_SOURCE_DIR 环境变量: {os.getenv('WIZNOTE_SOURCE_DIR')}")
+        print(f"[DEBUG] 实际使用的 source_dir: {config.source_dir}")
+
     # 创建迁移器
     migrator = WiznoteToObsidianMigrator(config)
 

@@ -62,11 +62,22 @@ class AttachmentMigrator:
         print(f"📁 目标目录: {vault_attach_dir}")
         print(f"模式: {'🧪 干运行' if self.dry_run else '✅ 实际迁移'}\n")
 
+        # 计算总文件数
+        total_files = sum(len(files) for files in attachments.values())
+        print(f"PROGRESS_START:{total_files}")
+
+        current_file = 0
         for source_dir, files in attachments.items():
             print(f"\n📂 处理目录: {Path(source_dir).relative_to(self.export_dir)}")
 
             for file_path in files:
                 try:
+                    current_file += 1
+                    percent = int((current_file / total_files) * 100) if total_files > 0 else 0
+
+                    # 标准进度输出格式
+                    print(f"PROGRESS:{current_file}:{total_files}:{percent}")
+
                     file_size = file_path.stat().st_size
 
                     # 复制文件到 Vault

@@ -452,6 +452,9 @@ class WiznoteToObsidianMigrator:
         dir_path = Path(self.config.target_dir)
         md_files = list(dir_path.rglob('*.md'))
 
+        # 输出总数，方便 GUI 解析
+        print(f"PROGRESS_START:{len(md_files)}")
+
         total_fixes = 0
         files_with_fixes = 0
 
@@ -466,6 +469,10 @@ class WiznoteToObsidianMigrator:
                 files_with_fixes += 1
                 total_fixes += len(fixes)
                 rel_path = str(file_path).replace(self.config.vault_dir, '')
+
+                # 标准进度输出格式：PROGRESS:current:total:percent
+                percent = int((i / len(md_files)) * 100)
+                print(f"PROGRESS:{i}:{len(md_files)}:{percent}")
                 print(f"[{i}/{len(md_files)}] ✅ {rel_path}")
                 for fix in fixes[:3]:
                     print(f"         {fix}")

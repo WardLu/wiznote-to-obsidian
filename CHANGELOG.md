@@ -5,6 +5,36 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.3.5] - 2026-02-23
+
+### 测试改进
+
+#### 单元测试修复 (app/)
+
+- ✅ **测试用例修复** - 修复所有激活相关测试
+  - 为激活测试添加授权码预创建逻辑（`set_license()` 调用）
+  - 修复 9 个测试文件的兼容性问题
+  - 改进测试流程和数据准备
+
+- ✅ **新增测试用例** - 扩展测试覆盖范围
+  - 新增 `test_errors.py` - 错误处理测试
+  - 新增 `test_license_client_extended.py` - 授权客户端扩展测试
+  - 新增 `test_license_panel.py` - 授权面板测试
+  - 新增 `conftest.py` - Pytest 配置文件
+
+- 🧪 **测试统计**：14 个文件变更，新增 935 行测试代码
+
+### 文档更新
+
+- 📝 新增 `TKINTER_FIX_README.md` - macOS 15.7.3 Tkinter 兼容性修复说明
+
+### 代码清理
+
+- 🧹 删除临时修复脚本和备份文件
+- 🧹 删除构建产物和虚拟环境（释放 248MB 空间）
+
+---
+
 ## [1.3.4] - 2026-02-23
 
 ### 验证与测试

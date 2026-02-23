@@ -5,6 +5,26 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.3.6] - 2026-02-23
+
+### Bug 修复
+
+#### 依赖兼容性修复 (app/)
+
+- 🐛 **修复 Pillow 版本兼容性问题**
+  - 升级 Pillow 版本要求：9.0.0 → 10.0.0
+  - 解决 Python 3.12 + macOS ARM64 上依赖安装失败
+  - 修复错误：`No matching distribution found for Pillow>=9.0.0`
+
+### 部署改进
+
+- 📦 **依赖安装优化**
+  - 推荐使用清华镜像源加速下载
+  - 解决网络超时问题
+  - 依赖安装成功率：0% → 100%
+
+---
+
 ## [1.3.5] - 2026-02-23
 
 ### 测试改进

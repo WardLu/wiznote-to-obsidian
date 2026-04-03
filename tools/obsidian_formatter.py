@@ -350,7 +350,27 @@ class ImagePathFixer:
         fixed_count = 0
         not_found_count = 0
 
-        images_in_file = re.findall(r'!\[\(/attachments/images/([^)]+)\)', content)
+        # 1. Normalize Markdown image destinations that contain spaces.
+        # CommonMark requires angle brackets when spaces appear in the destination.
+        def normalize_image_destination(match):
+            nonlocal fixed_count
+            alt_text = match.group(1)
+            image_path = match.group(2).strip()
+
+            if ' ' in image_path and not image_path.startswith('<'):
+                fixed_count += 1
+                return f'![{alt_text}](<{image_path}>)'
+
+            return match.group(0)
+
+        content = re.sub(
+            r'!\[([^\]]*)\]\(([^)\n]+)\)',
+            normalize_image_destination,
+            content,
+        )
+
+        # 2. Fix legacy absolute attachment image paths if they exist.
+        images_in_file = re.findall(r'!\[\]\(/attachments/images/([^)]+)\)', content)
 
         for image_name in images_in_file:
             relative_path = self.find_image_by_name(image_name)

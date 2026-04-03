@@ -14,6 +14,7 @@ import threading
 import argparse
 import ssl
 import certifi
+from datetime import datetime
 
 try:
     from websocket import create_connection
@@ -39,6 +40,11 @@ DEFAULT_MAX_RETRIES = 2
 DEFAULT_TIMEOUT = 15
 DEFAULT_MAX_WORKERS = 5
 DEFAULT_CONNECT_TIMEOUT = 10
+
+TAG_MAP = {
+    "c63131d9-270e-4f90-92c2-e022e20f0560": "星标",
+    "1d9bdff0-3ba9-4964-b818-4e926ec1da63": "星标2",
+}
 
 class WizMigrator:
     def __init__(self, user_id, password, max_workers=DEFAULT_MAX_WORKERS,
@@ -144,6 +150,43 @@ class WizMigrator:
         if not safe:
             safe = "Untitled"
         return safe
+
+    def format_tags(self, raw_tags):
+        """Convert WizNote tag UUIDs into readable tag names for frontmatter."""
+        if not raw_tags or raw_tags == "None":
+            return None
+
+        if isinstance(raw_tags, list):
+            parts = [str(tag).strip() for tag in raw_tags if str(tag).strip()]
+        else:
+            parts = [part.strip() for part in str(raw_tags).split("*") if part.strip()]
+
+        if not parts:
+            return None
+
+        names = []
+        for part in parts:
+            mapped = TAG_MAP.get(part, part)
+            if mapped not in names:
+                names.append(mapped)
+
+        if len(names) == 1:
+            return names[0]
+
+        return "[" + ", ".join(names) + "]"
+
+    def format_date(self, raw_date):
+        """Convert WizNote timestamps to YYYY-MM-DD for Obsidian frontmatter."""
+        if raw_date in (None, "", "None"):
+            return None
+
+        try:
+            timestamp = int(raw_date)
+            if timestamp > 1e12:
+                timestamp = timestamp / 1000
+            return datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d")
+        except (TypeError, ValueError, OSError, OverflowError):
+            return raw_date
 
     def get_note_resources(self, doc_guid):
         """
@@ -784,7 +827,16 @@ class WizMigrator:
                     md_content += f"- [[{assets_folder_name}/{att_name}|{att_name}]]\n"
 
             # 写入文件
-            frontmatter = f"---\ntitle: {note_title}\ndate: {note.get('created')}\ntags: {note.get('tags')}\n---\n\n"
+            tags = self.format_tags(note.get('tags'))
+            frontmatter_lines = [
+                "---",
+                f"title: {note_title}",
+                f"date: {self.format_date(note.get('created'))}",
+            ]
+            if tags:
+                frontmatter_lines.append(f"tags: {tags}")
+            frontmatter_lines.append("---")
+            frontmatter = "\n".join(frontmatter_lines) + "\n\n"
             with open(md_file_path, 'w', encoding='utf-8') as f:
                 f.write(frontmatter + md_content)
 

@@ -151,8 +151,8 @@ class WizMigrator:
 
         Some WizNote notes start with one of the following immediately after the
         generated frontmatter:
-        - a Markdown heading matching the note title, e.g. '# 腰突'
-        - a plain text line matching the note title, e.g. '发球，反手'
+        - a Markdown heading matching the note title
+        - a plain text line matching the note title
         - a placeholder '无标题'
         """
         if not content:

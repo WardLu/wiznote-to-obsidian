@@ -41,11 +41,6 @@ DEFAULT_TIMEOUT = 15
 DEFAULT_MAX_WORKERS = 5
 DEFAULT_CONNECT_TIMEOUT = 10
 
-TAG_MAP = {
-    "c63131d9-270e-4f90-92c2-e022e20f0560": "星标",
-    "1d9bdff0-3ba9-4964-b818-4e926ec1da63": "星标2",
-}
-
 class WizMigrator:
     def __init__(self, user_id, password, max_workers=DEFAULT_MAX_WORKERS,
                  max_retries=DEFAULT_MAX_RETRIES, timeout=DEFAULT_TIMEOUT,
@@ -150,30 +145,6 @@ class WizMigrator:
         if not safe:
             safe = "Untitled"
         return safe
-
-    def format_tags(self, raw_tags):
-        """Convert WizNote tag UUIDs into readable tag names for frontmatter."""
-        if not raw_tags or raw_tags == "None":
-            return None
-
-        if isinstance(raw_tags, list):
-            parts = [str(tag).strip() for tag in raw_tags if str(tag).strip()]
-        else:
-            parts = [part.strip() for part in str(raw_tags).split("*") if part.strip()]
-
-        if not parts:
-            return None
-
-        names = []
-        for part in parts:
-            mapped = TAG_MAP.get(part, part)
-            if mapped not in names:
-                names.append(mapped)
-
-        if len(names) == 1:
-            return names[0]
-
-        return "[" + ", ".join(names) + "]"
 
     def format_date(self, raw_date):
         """Convert WizNote timestamps to YYYY-MM-DD for Obsidian frontmatter."""
@@ -827,14 +798,12 @@ class WizMigrator:
                     md_content += f"- [[{assets_folder_name}/{att_name}|{att_name}]]\n"
 
             # 写入文件
-            tags = self.format_tags(note.get('tags'))
             frontmatter_lines = [
                 "---",
                 f"title: {note_title}",
                 f"date: {self.format_date(note.get('created'))}",
+                f"tags: {note.get('tags')}",
             ]
-            if tags:
-                frontmatter_lines.append(f"tags: {tags}")
             frontmatter_lines.append("---")
             frontmatter = "\n".join(frontmatter_lines) + "\n\n"
             with open(md_file_path, 'w', encoding='utf-8') as f:

@@ -363,8 +363,10 @@ class ImagePathFixer:
 
             return match.group(0)
 
+        # Allow one level of parentheses inside destinations so note names like
+        # "日记 2018年12月14日(周五)_files/..." are not truncated at the first ")".
         content = re.sub(
-            r'!\[([^\]]*)\]\(([^)\n]+)\)',
+            r'!\[([^\]]*)\]\(((?:<[^>\n]+>|(?:[^()\n]|\\\(|\\\)|\([^()\n]*\))+))\)',
             normalize_image_destination,
             content,
         )

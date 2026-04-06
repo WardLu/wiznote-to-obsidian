@@ -1,0 +1,594 @@
+* {
+  font-family: Lato, -apple-system, SF UI Text, Helvetica Neue, Helvetica, sans-serif;
+  -webkit-text-size-adjust: none; /* Prevent font scaling in landscape */
+}
+
+/* Colors
+link-blue #44C0FF
+highlight-pink #FF6E6B
+light-gray #7A7A7A
+*/
+
+
+html,body,h1,h2,h3,h4,h5,h6,p,blockquote,pre,code,img,small,sub,sup,b,i,dl,dt,dd,ol,ul,li,table,tbody,tfoot,thead,tr,th,td {
+  border: 0;
+  font-size: <fontsize>px;
+  margin: 0;
+  padding: 0;
+  outline: 0;
+  line-height: 1.5em;
+}
+
+body {
+  background-color: rgba(255,255,255,0.0);
+  padding: 16px 30px 5px 30px;
+  color: #333;
+  word-wrap: break-word;
+  margin: 0;
+}
+
+/* Highlighed Text Color */
+
+::selection {background: #44C0FF; color:#FFFFFF;}
+
+
+/* EMBEDS */
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5px;
+}
+
+img.large-image {
+  width: 100%;
+}
+
+img:not(.large-image) {
+    max-width: 100%;
+}
+
+@media (min-width: 960px) {
+    img {
+        /* When printing big pages, we want the images not to grow too large */
+        max-width: 960px;
+    }
+}
+
+.inline-img-wrapper {
+  /* Put the children side-by-side */
+  display: -webkit-flex;
+  /* Insert whitespace between elements when they don't add up to 100%. Simulates margin between children */
+  -webkit-box-pack: justify;
+
+  width: 100%;
+  height: 10em;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 960px;
+}
+
+.inline-img {
+  /* When putting an image in a flex container, we have to limit its width explicitly or it blows out of its bounds */
+  width: calc(50% - 2.5px);
+  /* This is a fancy trick to hide the actual deformed image from the image tag. It just scoots it out of sight */
+  box-sizing: border-box;
+  padding-left: calc(50% - 2.5px);
+  /* This sticks the CSS image background in the right place, and sizes it to just cover the frame */
+  background-size: cover !important;
+  background-position: center center !important;
+}
+
+.inline-img + .inline-img {
+  margin-left: 5px;
+}
+
+.media_embed {
+  display: block;
+  padding: 0;
+  margin-left: -30px;
+  width: calc(100% + 60px) !important;
+}
+
+img.large-image, .inline-img-wrapper {
+  margin-left: -30px;
+  width: calc(100% + 60px);
+}
+
+strong {
+  color: #252525;
+  font-weight: 600;
+}
+
+a {
+  color: #44C0FF;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #FF6E6B;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #eaeaea;
+  display: block;
+  height: 1px;
+  margin: 1em 0;
+  padding: 0;
+}
+
+
+p,pre {
+  margin: 1.5em 0 1.5em;
+}
+
+h2,h3,h4,h5,h6 {
+  margin: .5em 0 .2em 0;
+}
+
+
+/* HEADERS */
+
+
+h1 {
+  font-size: 1.3em;
+  font-weight: 700;
+  margin: .9em 0 .4em 0;
+}
+
+h2 {
+  font-size: 1.2em;
+  font-weight: 800;
+}
+
+h3 {
+  font-size: 1.1em;
+  font-weight: 700;
+  color: #EA4C89;
+
+}
+
+h4 {
+  font-weight: 600;
+  color: #44C0FF;
+}
+
+h5 {
+  font-weight: 600;
+  font-size: .8em;
+  color: #999;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 4px;
+}
+
+h6 {
+  font-weight: 500;
+  font-size: .8em;
+  color: #AAA;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 4px;
+}
+
+h1 + p, h2 + p, h3 + p, h4 + p, h5 + p, h6 + p {
+  margin-top: -0.1em;
+}
+
+/* LISTS */
+
+ol,ul {
+  margin: .5em 1.5em;
+  padding-left: 0;
+  color: #444;
+}
+
+ol li {
+  margin-left: .4em;
+  padding-left: .4em;
+}
+
+ul li {
+  margin-left: .4em;
+}
+
+ul li:last-child {
+  margin-bottom: .7em;
+}
+
+ul li li {
+  margin-left: .8em;
+}
+
+
+ol ol,ol ul,ul ol,ul ul {
+  margin: 0 .3em;
+}
+
+ul li li li li {
+  list-style-type: circle;
+}
+ul li li li li li {
+  list-style-type: square;
+}
+ul li li li li li li {
+  list-style-type: circle;
+}
+ul li li li li li li li {
+  list-style-type: square;
+}
+
+li p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.footnotes ol li {
+  margin-bottom: 10px;
+  margin-left: 16px;
+  font-weight: 800;
+  font-size: .9em;
+}
+
+.footnotes ol li p {
+  font-weight: 400;
+  font-size: 1em;
+}
+
+/* code */
+/* preformatted */
+blockquote {
+  margin: 0;
+  border-left: solid .2em #F0F0F0;
+  padding: 0 .7em;
+  quotes: none;
+  color: #707070;
+}
+
+code,
+pre{
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+code {
+    padding: 3px 5px;
+    font-size: .8em;
+    color: #0092DC;
+    background-color: #F4F4F4;
+    border-radius: 4px;
+}
+
+pre {
+    display: block;
+    padding: 9.5px;
+    margin: 0 0 10px;
+    line-height: 1;
+    color: #333;
+    word-wrap: break-word;
+    background-color: #F4F4F4;
+    border-radius: 4px;
+}
+pre code {
+    padding: 0;
+    color: inherit;
+    white-space: pre-wrap;
+    background-color: transparent;
+    border-radius: 0;
+}
+
+
+/* tables */
+table {
+  margin-right: auto;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-spacing: 0;
+}
+
+table th {
+  padding: 3px 10px;
+  background-color: #eee;
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+}
+
+table tr {
+}
+
+table td {
+  padding: 3px 10px;
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+}
+
+/* sub */
+sup,sub,a.footnote {
+  font-size: 1.4ex;
+  height: 0;
+  line-height: 1;
+  vertical-align: super;
+  position: relative;
+  font-weight: 800;
+}
+
+sub {
+  vertical-align: sub;
+  top: -1px;
+}
+
+small {
+  font-size: 85%;
+}
+
+mark {
+  background: #ff0;
+  color: #000;
+  font-style: italic;
+  font-weight: 600;
+}
+
+del {
+  text-decoration: line-through;
+  color: #B2B2B2;
+}
+
+.tags {
+  width: 100%;
+  margin-top: .4em;
+}
+
+.tag {
+  font-size: .9em;
+  font-weight: 400;
+  background-color: #F1F1F1;
+  color: #6F6F6F;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  padding: .2em .4em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  max-width: 95%;
+  margin: 3px 0 2px;
+  line-height: 1.3em;
+}
+
+.tag:hover {
+    background-color: #4a4a4a;
+    color: #ededed;
+}
+
+.tag:hover {
+  background-color: #4a4a4a;
+  color: #ededed;
+}
+
+.activity {
+  font-size: .6em;
+  font-weight: 600;
+  background-color: #ffffff;
+  color: #818181;
+  -moz-border-radius: 2px;
+  border: 1px solid #ececec;
+  border-radius: 2px;
+  padding: .3em .5em;
+  margin: 0;
+}
+
+/* Journal Colors */
+.do44C0FF { color: #44C0FF !important; } /* DayOne Blue */
+.do16D6D9 { color: #16D6D9 !important; } /* Aqua */
+.do2DCC71 { color: #2DCC71 !important; } /* Green */
+.doFFC107 { color: #FFC107 !important; } /* Honey */
+.doFF7EB0 { color: #FF7EB0 !important; } /* Watermelon */
+.doFF6E6B { color: #FF6E6B !important; } /* Salmon */
+.do3398DB { color: #3398DB !important; } /* Blue */
+.do95A5A6 { color: #95A5A6 !important; } /* Pewter */
+.doC9A286 { color: #C9A286 !important; } /* Tortilla */
+.doFF983B { color: #FF983B !important; } /* Fire */
+.doC27BD2 { color: #C27BD2 !important; } /* Lavendar */
+.doE74C3C { color: #E74C3C !important; } /* Red */
+.do333B40 { color: #333B40 !important; } /* Charcoal */
+.do607D8B { color: #607D8B !important; } /* Stone */
+.doCCDB18 { color: #CCDB18 !important; } /* Lime */
+.doE91E63 { color: #E91E63 !important; } /* Hot Pink */
+.doCF2F89 { color: #CF2F89 !important; } /* Magenta */
+.do6A6DCD { color: #6A6DCD !important; } /* Iris */
+
+/* checkboxes */
+ul.checkboxes {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-left: 2rem;
+}
+
+ul.checkboxes li {
+  position: relative;
+  margin-left: 0;
+}
+
+ul.checkboxes input[type=checkbox] {
+  -moz-appearance: none;
+  appearance: none;
+  -webkit-appearance: none;
+	background-color: #fafafa;
+	border: 2px solid #44c0ff;
+	padding: 9px;
+	border-radius: 50%;
+	position: absolute;
+  top: -1px !important;
+  left: -2rem;
+}
+
+ul.checkboxes input[type=checkbox]:checked {
+  background-color: #44c0ff;
+	border: 2px solid #44c0ff;
+	color: #fff;
+}
+
+ul.checkboxes input[type=checkbox]:checked:after {
+	content: "";
+  background: url(check-small.svg);
+	position: absolute;
+	top: 1px;
+	left: 4px;
+	color: #fff;
+  background-repeat: no-repeat;
+}
+
+/* special combinations */
+blockquote + .tags {
+  margin-top: 1em;
+}
+
+iframe.spotify {
+  width: 100%;
+}
+
+/* AUDIO */
+.player {
+  display: flex;
+  border: 1px solid #E6E6E6;
+  padding: 1rem;
+  width: 100%;
+  margin: 0 auto;
+  margin-top: 1rem;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  border-radius: 6px;
+}
+
+.scrubber {
+  position: relative;
+  margin-right: 1rem;
+}
+
+.scrubber-landscape {
+  width: 80%;
+}
+
+.scrubber-portrait {
+  width: 60%;
+}
+
+.scrubber-timeline-container {
+  position: absolute;
+  top: 1.5rem;
+  width: 100%;
+}
+
+.scrubber-timeline {
+  background-color: #b6b6b6;
+  height: 2px;
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+}
+
+.scrubber-timeline-current {
+  background-color: #44c0ff;
+  position: absolute;
+  height: 2px;
+  left: 0;
+  z-index: 2;
+}
+
+.scrubber-knob {
+  width: 10px;
+	height: 10px;
+	border-radius: 50%;
+  background-color: #000;
+  cursor: pointer;
+  user-select: none;
+}
+
+.scrubber-knob-container {
+  position: absolute;
+  z-index: 66;
+  bottom: 0;
+}
+
+.play-button {
+  background-color: #44c0ff;
+  border: none;
+  border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.play {
+  background-image: url(play.svg);
+  background-size: 2rem;
+  background-repeat: no-repeat;
+  background-position: .5rem;
+}
+
+.pause {
+  background-image: url(pause.svg);
+  background-size: 2rem;
+  background-repeat: no-repeat;
+  background-position: .5rem;
+}
+
+.settings-button {
+  border: none;
+  background-color: transparent;
+  background-image: url(settings.svg);
+  background-repeat: no-repeat;
+  width: 2rem;
+  background-position-y: center;
+  background-position-x: right;
+  padding: 0;
+  margin-left: auto;
+  cursor: pointer;
+}
+
+.row {
+  display: flex;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.inner-container {
+  width: 100%;
+  border-top: 1px solid #f1f1f1;
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.tb-show {
+  color: #44c0ff;
+  text-decoration: none;
+  margin-top: .75rem;
+  display: block;
+}
+
+.tb-show:hover {
+  color: #44c0ff;
+}
+
+
+.end-time {
+  color: rgb(124, 123, 124);
+  position: absolute;
+  right: 0;
+  bottom: -5px;
+  user-select: none;
+  pointer-events: none;
+  margin: 0;
+}
+
+.current-time {
+  color: rgb(124, 123, 124);
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  user-select: none;
+  pointer-events: none;
+  margin: 0;
+}

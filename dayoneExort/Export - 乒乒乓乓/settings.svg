@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="26px" height="6px" viewBox="0 0 26 6" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 45.1 (43504) - http://www.bohemiancoding.com/sketch -->
+    <title>three-dots</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Audio-Recording-3" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M3,6 C1.34314575,6 0,4.65685425 0,3 C0,1.34314575 1.34314575,0 3,0 C4.65685425,0 6,1.34314575 6,3 C6,4.65685425 4.65685425,6 3,6 Z M13,6 C11.3431458,6 10,4.65685425 10,3 C10,1.34314575 11.3431458,0 13,0 C14.6568542,0 16,1.34314575 16,3 C16,4.65685425 14.6568542,6 13,6 Z M23,6 C21.3431458,6 20,4.65685425 20,3 C20,1.34314575 21.3431458,0 23,0 C24.6568542,0 26,1.34314575 26,3 C26,4.65685425 24.6568542,6 23,6 Z" id="three-dots" fill="#CCCCCC"></path>
+    </g>
+</svg>

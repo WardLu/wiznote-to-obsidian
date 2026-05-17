@@ -11,6 +11,7 @@ tools/
 ├── sync_deletions.py           🗑️  同步删除工具
 ├── migrate_attachments.py      📎 附件迁移工具
 ├── link_attachments.py         🔗 附件链接工具
+├── normalize_attachments.py    🧹 附件归一化工具
 ├── config_helper.py            ⚙️  配置模块
 ├── config.example.json         📝 配置模板
 └── README.md                   📖 本文档
@@ -215,9 +216,39 @@ python3 tools/sync_deletions.py --confirm \
 
 **注意**：已整合到主工具 `obsidian_formatter.py --link-attachments`
 
+#### 6. normalize_attachments.py
+
+**作用**：将笔记旁的 `*_files/` 图片和附件统一迁移到 Vault 根目录的 `attachments/`
+
+**使用场景**：
+- 希望按 Obsidian 常见做法集中管理附件
+- 想把正文里的 `Some Note_files/foo.png` 改成 Obsidian 友好的附件引用
+- 想清理导出后残留的未引用图片，例如常见的 `wizIcon_icons_l.png`、`wizIcon_icons_m.png`、`wizIcon_icons_s.png`
+
+**功能**：
+- 将被正文引用的本地图片改写为 `![[attachments/...]]`
+- 将被正文引用的本地非图片附件改写为 `[[attachments/...|原文本]]`
+- 修改 Markdown 前自动生成 `.attachbak` 备份
+- 可选删除空图片占位 `![]()`
+- 可选列出并删除 `*_files/` 中未被引用的残留图片，同时清理变空目录
+
+**使用方法**：
+```bash
+# 预览即将执行的变更
+python3 tools/normalize_attachments.py --dry-run
+
+# 迁移正文实际引用到的图片/附件
+python3 tools/normalize_attachments.py
+
+# 连同空图片占位和未引用的残留图片一起清理
+python3 tools/normalize_attachments.py \
+  --remove-empty-placeholders \
+  --delete-unreferenced-images
+```
+
 ### 辅助工具
 
-#### 6. config_helper.py
+#### 7. config_helper.py
 
 **作用**：配置管理模块
 
